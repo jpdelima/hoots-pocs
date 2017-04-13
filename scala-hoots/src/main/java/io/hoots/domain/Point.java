@@ -1,20 +1,20 @@
 package io.hoots.domain;
 
-import java.util.UUID;
-
 public class Point {
 
-	private int time;
-	private UUID id;
+	private Chunk chunk;
+	private Item item;
 
-	public Point(UUID id, int time) {
-		this.id = id;
-		this.time = time;
+	public Point(Item item, int chunk) {
+		this.item = item;
+		this.chunk = new Chunk(chunk);
 	}
 
-	public int getTime() {
-		return time;
+	public Chunk getChunk() {
+		return chunk;
 	}
 
-	public UUID getId() { return id; }
+	public Item getItem() {
+		return item;
+	}
 }

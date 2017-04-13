@@ -1,4 +1,4 @@
-package io.hoots;
+package io.hoots.fft;
 
 
 import io.hoots.domain.Complex;

@@ -6,6 +6,8 @@ import java.util.UUID
 import javax.sound.sampled.AudioSystem
 
 import io.hoots.`match`.Matcher
+import io.hoots.domain.Item
+import io.hoots.domain.score.BasicScoreCalculator
 import io.hoots.fingerprint.FingerPrinter
 
 import scala.collection.JavaConverters._
@@ -32,28 +34,29 @@ object Application {
     println(s"Supported types -> ${l.length}")
 
     val map = Seq(file1, file2, file3, file4, file5, file6, file7).map{f =>
-      UUID.randomUUID() -> f
+      new Item(f.getName) -> f
     }
 
     val printer = new FingerPrinter()
     val matcher = new Matcher()
-    for((uuid, f) <- map) {
-      val result = printer.exec(f, uuid)
+    for((item, f) <- map) {
+      val result = printer.exec(f, item)
       matcher.update(result)
     }
-    val sampleUUID = UUID.randomUUID()
-    val sampleResult = printer.exec(sample, sampleUUID)
+    val sampleResult = printer.exec(sample, new Item(sample.getName))
 
+    val calculator = new BasicScoreCalculator
     val start = Instant.now()
-    val scores = matcher.check(sampleResult)
+    val matchResult = matcher.matchSmaple(sampleResult)
+    val scores = calculator.calculate(matchResult)
     val end = Instant.now()
 
     println(s"Duration ${Duration.between(start, end).toMillis} ms")
     val res = scores.asScala
     println(s"Scores for sample -> ${sample.getName}:")
-    println(s"Found for sample -> ${res.maxBy(_._2)}:")
-    for((uuid, f) <- map) {
-      println(s"File -> $uuid -> ${f.getName} -> ${res(uuid)}")
+    println(s"Found for sample -> ${res.maxBy(_._2.getRank)}:")
+    for((item, f) <- map) {
+      println(s"File -> ${f.getName} -> ${res(item)}")
     }
   }
 }
