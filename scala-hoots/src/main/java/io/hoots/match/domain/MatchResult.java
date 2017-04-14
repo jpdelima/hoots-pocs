@@ -16,7 +16,6 @@ public class MatchResult {
 
     private final Map<Item, Score> scores;
     private final AudioFormat inputFormat;
-    //TODO change to chunk type
     private final Map<Item, Point> matchPoints;
 
     public MatchResult(Map<Item, Score> scores, AudioFormat inputFormat, Map<Item, Point> matchPoints) {
