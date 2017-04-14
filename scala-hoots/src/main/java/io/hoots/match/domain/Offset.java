@@ -1,17 +1,17 @@
-package io.hoots.domain.hash;
+package io.hoots.match.domain;
 
 /**
  * Created by rwadowski on 13.04.17.
  */
-public class Hash {
+public class Offset {
 
-    private final Long v;
+    private final int v;
 
-    public Hash(Long v) {
+    public Offset(int v) {
         this.v = v;
     }
 
-    public Long value() {
+    public long value() {
         return this.v;
     }
 
@@ -25,16 +25,19 @@ public class Hash {
             return true;
         }
 
-        if(!(object instanceof Hash)) {
+        if(!(object instanceof Offset)) {
             return false;
         }
 
-        final Hash that = (Hash) object;
-        return that.v.equals(this.v);
+        final Offset that = (Offset) object;
+
+        return that.v == this.v;
     }
 
     @Override
     public int hashCode() {
-        return this.v.hashCode();
+        int result = 17;
+        result = 31 * result + this.v;
+        return result;
     }
 }

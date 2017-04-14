@@ -1,6 +1,4 @@
-package io.hoots.domain.hash;
-
-import io.hoots.domain.Point;
+package io.hoots.fingerprint.domain;
 
 import java.util.List;
 

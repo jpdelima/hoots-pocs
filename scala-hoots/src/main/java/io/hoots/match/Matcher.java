@@ -1,10 +1,10 @@
 package io.hoots.match;
 
-import io.hoots.domain.Item;
-import io.hoots.domain.Point;
-import io.hoots.domain.hash.Hash;
-import io.hoots.domain.hash.HashMatch;
-import io.hoots.domain.score.Score;
+import io.hoots.fingerprint.domain.Point;
+import io.hoots.fingerprint.domain.Hash;
+import io.hoots.fingerprint.domain.HashMatch;
+import io.hoots.fingerprint.domain.FingerPrint;
+import io.hoots.match.domain.Matches;
 
 import java.util.*;
 
@@ -23,21 +23,23 @@ public class Matcher {
         this.hashes = hashes;
     }
 
-    public void update(Map<Hash, List<Point>> h) {
-        final Set<Hash> keys = h.keySet();
+    public void update(FingerPrint print) {
+        final Map<Hash, List<Point>> printHashes = print.getPrint();
+        final Set<Hash> keys = printHashes.keySet();
         for(Hash k : keys) {
             if(hashes.containsKey(k)) {
                 final List<Point> points = hashes.get(k);
-                final List<Point> newPoints = h.get(k);
+                final List<Point> newPoints = printHashes.get(k);
                 points.addAll(newPoints);
                 hashes.put(k, points);
             } else {
-                hashes.put(k, h.get(k));
+                hashes.put(k, printHashes.get(k));
             }
         }
     }
 
-    public List<HashMatch> matchSmaple(Map<Hash, List<Point>> sample) {
+    public Matches process(FingerPrint print) {
+        final Map<Hash, List<Point>> sample = print.getPrint();
         final List<HashMatch> matches = new ArrayList<>();
         final Set<Hash> sampleHashes = sample.keySet();
         for(Hash sh : sampleHashes) {
@@ -49,6 +51,6 @@ public class Matcher {
             final HashMatch m = new HashMatch(sh, samplePoints, points);
             matches.add(m);
         }
-        return matches;
+        return new Matches(matches, print.getInputFormat());
     }
 }

@@ -1,4 +1,4 @@
-package io.hoots.domain;
+package io.hoots.input.domain;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package io.hoots.domain;
+package io.hoots.fft.domain;
 
 
 /*************************************************************************

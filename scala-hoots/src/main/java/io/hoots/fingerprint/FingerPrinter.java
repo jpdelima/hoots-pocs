@@ -1,14 +1,15 @@
 package io.hoots.fingerprint;
 
-import io.hoots.domain.Complex;
-import io.hoots.domain.Item;
-import io.hoots.domain.Point;
-import io.hoots.domain.hash.Hash;
+import io.hoots.fft.domain.Complex;
+import io.hoots.fingerprint.domain.Chunk;
+import io.hoots.input.domain.Item;
+import io.hoots.fingerprint.domain.Point;
+import io.hoots.fingerprint.domain.Hash;
 import io.hoots.fft.FFT;
-import io.hoots.input.WaveAudioFileReader;
+import io.hoots.fingerprint.domain.FingerPrint;
+import io.hoots.input.domain.Signature;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,6 @@ import java.util.Map;
  */
 public class FingerPrinter {
 
-    private final WaveAudioFileReader reader = new WaveAudioFileReader();
     private final int UPPER_LIMIT = 300;
     private final int LOWER_LIMIT = 40;
     private final int CHUNK_SIZE = 4096;
@@ -28,9 +28,10 @@ public class FingerPrinter {
 
     public FingerPrinter() {}
 
-    public Map<Hash, List<Point>> exec(File ff, Item item) {
-        final ByteArrayOutputStream stream = reader.streamFromFile(ff);
-        return makeSpectrum(stream, item);
+    public FingerPrint process(Signature signature) {
+        final Item item = signature.getItem();
+        final Map<Hash, List<Point>> spectrum = makeSpectrum(signature.getStream(), item);
+        return new FingerPrint(item, spectrum, signature.getInputFormat());
     }
 
     private Map<Hash, List<Point>> makeSpectrum(ByteArrayOutputStream out, Item item) {
@@ -44,7 +45,7 @@ public class FingerPrinter {
         // For all the chunks:
         for(int chunkNo = 0; chunkNo < amountPossible; chunkNo++) {
             final Complex[] complex = new Complex[CHUNK_SIZE];
-            for(int i = 0; i < 4096; i++) {
+            for(int i = 0; i < CHUNK_SIZE; i++) {
                 // Put the time domain data into a complex number with imaginary
                 // part as 0:
                 complex[i] = new Complex(audio[(chunkNo * CHUNK_SIZE) + i], 0);
@@ -100,11 +101,11 @@ public class FingerPrinter {
             List<Point> listPoints = hashMap.get(hash);
             if(listPoints == null) {
                 listPoints = new ArrayList<>();
-                Point point = new Point(item, t);
+                Point point = new Point(item, new Chunk(t, CHUNK_SIZE));
                 listPoints.add(point);
                 hashMap.put(hash, listPoints);
             } else {
-                Point point = new Point(item, t);
+                Point point = new Point(item, new Chunk(t, CHUNK_SIZE));
                 listPoints.add(point);
             }
         }

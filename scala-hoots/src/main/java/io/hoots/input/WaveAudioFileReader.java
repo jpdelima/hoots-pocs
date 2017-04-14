@@ -1,5 +1,7 @@
 package io.hoots.input;
 
+import io.hoots.input.domain.Item;
+import io.hoots.input.domain.Signature;
 import org.tritonus.sampled.convert.PCM2PCMConversionProvider;
 
 import javax.sound.sampled.AudioFormat;
@@ -25,7 +27,7 @@ public class WaveAudioFileReader implements AudioFileReader {
     }
 
     @Override
-    public ByteArrayOutputStream streamFromFile(File file) {
+    public Signature streamFromFile(File file) {
         try {
             final AudioInputStream in = AudioSystem.getAudioInputStream(file);
             final AudioFormat baseFormat = in.getFormat();
@@ -45,7 +47,7 @@ public class WaveAudioFileReader implements AudioFileReader {
             din.close();
             outDin.close();
             out.close();
-            return out;
+            return new Signature(new Item(file.getName()), out, decodedFormat);
         } catch (Exception e) {
             return null;
         }

@@ -1,4 +1,4 @@
-package io.hoots.domain.score;
+package io.hoots.match.domain;
 
 /**
  * Created by rwadowski on 13.04.17.

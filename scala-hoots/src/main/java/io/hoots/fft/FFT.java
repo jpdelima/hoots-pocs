@@ -1,7 +1,7 @@
 package io.hoots.fft;
 
 
-import io.hoots.domain.Complex;
+import io.hoots.fft.domain.Complex;
 
 /*************************************************************************
  * Compilation: javac FFT.java Execution: java FFT N Dependencies: Complex.java

@@ -5,10 +5,10 @@ import java.time.{Duration, Instant}
 import java.util.UUID
 import javax.sound.sampled.AudioSystem
 
-import io.hoots.`match`.Matcher
-import io.hoots.domain.Item
-import io.hoots.domain.score.BasicScoreCalculator
+import io.hoots.`match`.{BasicAnalyzer, Matcher}
 import io.hoots.fingerprint.FingerPrinter
+import io.hoots.input.WaveAudioFileReader
+import io.hoots.input.domain.Item
 
 import scala.collection.JavaConverters._
 
@@ -33,30 +33,31 @@ object Application {
     val l = AudioSystem.getAudioFileTypes()
     println(s"Supported types -> ${l.length}")
 
-    val map = Seq(file1, file2, file3, file4, file5, file6, file7).map{f =>
-      new Item(f.getName) -> f
-    }
-
+    val files = Seq(file1, file2, file3, file4, file5, file6, file7)
     val printer = new FingerPrinter()
     val matcher = new Matcher()
-    for((item, f) <- map) {
-      val result = printer.exec(f, item)
+    val reader = new WaveAudioFileReader()
+    val map = for(f <- files) yield {
+      val signature = reader.streamFromFile(f)
+      val result = printer.process(signature)
       matcher.update(result)
+      signature.getItem -> f
     }
-    val sampleResult = printer.exec(sample, new Item(sample.getName))
+    val sampleResult = printer.process(reader.streamFromFile(sample))
 
-    val calculator = new BasicScoreCalculator
+    val analyzer = new BasicAnalyzer
     val start = Instant.now()
-    val matchResult = matcher.matchSmaple(sampleResult)
-    val scores = calculator.calculate(matchResult)
+    val matches = matcher.process(sampleResult)
+    val result = analyzer.process(matches)
     val end = Instant.now()
 
     println(s"Duration ${Duration.between(start, end).toMillis} ms")
-    val res = scores.asScala
+    val res = result.getScores.asScala
     println(s"Scores for sample -> ${sample.getName}:")
     println(s"Found for sample -> ${res.maxBy(_._2.getRank)}:")
     for((item, f) <- map) {
       println(s"File -> ${f.getName} -> ${res(item)}")
     }
+    println(s"Timestamps ${result.getMatchTimestamps.asScala}")
   }
 }

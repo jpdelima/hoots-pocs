@@ -1,17 +1,17 @@
-package io.hoots.domain;
+package io.hoots.fingerprint.domain;
 
 /**
  * Created by rwadowski on 13.04.17.
  */
-public class Offset {
+public class Hash {
 
-    private final int v;
+    private final Long v;
 
-    public Offset(int v) {
+    public Hash(Long v) {
         this.v = v;
     }
 
-    public long value() {
+    public Long value() {
         return this.v;
     }
 
@@ -25,19 +25,16 @@ public class Offset {
             return true;
         }
 
-        if(!(object instanceof Offset)) {
+        if(!(object instanceof Hash)) {
             return false;
         }
 
-        final Offset that = (Offset) object;
-
-        return that.v == this.v;
+        final Hash that = (Hash) object;
+        return that.v.equals(this.v);
     }
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + this.v;
-        return result;
+        return this.v.hashCode();
     }
 }

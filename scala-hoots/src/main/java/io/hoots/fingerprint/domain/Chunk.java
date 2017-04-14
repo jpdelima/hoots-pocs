@@ -1,4 +1,4 @@
-package io.hoots.domain;
+package io.hoots.fingerprint.domain;
 
 /**
  * Created by rwadowski on 13.04.17.
@@ -6,13 +6,23 @@ package io.hoots.domain;
 public class Chunk {
 
     private final int no;
+    private final int size;
 
-    public Chunk(int no) {
+    public Chunk(int no, int size) {
         this.no = no;
+        this.size = size;
     }
 
     public int number() {
         return this.no;
+    }
+
+    public int getSize() {
+        return this.size;
+    }
+
+    public float getByte() {
+        return this.size * this.no;
     }
 
     @Override

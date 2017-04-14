@@ -1,6 +1,7 @@
 package io.hoots.input;
 
-import java.io.ByteArrayOutputStream;
+import io.hoots.input.domain.Signature;
+
 import java.io.File;
 
 /**
@@ -8,5 +9,5 @@ import java.io.File;
  */
 public interface AudioFileReader {
 
-    public ByteArrayOutputStream streamFromFile(File file);
+    Signature streamFromFile(File file);
 }
