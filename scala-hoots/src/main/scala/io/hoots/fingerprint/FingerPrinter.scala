@@ -18,7 +18,8 @@ class FingerPrinter(fft: FFT = new JTransformFFT) {
   val upperLimit = 300
   val lowerLimit = 40
   val chunkSize = ChunkSize(4096)
-  val FUZ_FACTOR = 3
+  val fuzFactor = 3
+  private val hashBuilder = new DefaultHashBuilder(fuzFactor)
 
   val range = Seq(lowerLimit, 80, 120, 180, upperLimit)
   val frequencies: Range = lowerLimit until upperLimit
@@ -56,8 +57,7 @@ class FingerPrinter(fft: FFT = new JTransformFFT) {
         frequency = frequency + 1
       }
 
-      val h = hashForPoints(points(t)(0), points(t)(1), points(t)(2), points(t)(3))
-      val hash = Hash(h)
+      val hash = hashBuilder.hash(Seq(points(t)(0), points(t)(1), points(t)(2), points(t)(3)))
       val point = Point(item, Chunk(ChunkNumber(t), chunkSize))
       if(pointsMap.contains(hash)) {
         val hashPoints = pointsMap(hash)
@@ -68,10 +68,6 @@ class FingerPrinter(fft: FFT = new JTransformFFT) {
       t = t + 1
     }
     pointsMap.map{case (hash, buffer) => hash -> buffer.toList}.toMap
-  }
-
-  private def hashForPoints(p1: Long, p2: Long, p3: Long, p4: Long): Long = {
-    (p4 - (p4 % FUZ_FACTOR)) * 100000000 + (p3 - (p3 % FUZ_FACTOR)) * 100000 + (p2 - (p2 % FUZ_FACTOR)) * 100 + (p1 - (p1 % FUZ_FACTOR))
   }
 
   private def indexForFrequency(frequency: Int): Int = {
