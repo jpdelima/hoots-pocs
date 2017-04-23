@@ -1,4 +1,4 @@
-package io.hoots.input;
+package io.hoots.signature;
 
 import javax.sound.sampled.AudioFormat;
 
