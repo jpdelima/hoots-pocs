@@ -13,16 +13,11 @@ import scala.collection.mutable
 /**
   * Created by rwadowski on 19.04.17.
   */
-class FingerPrinter(fft: FFT = new JTransformFFT) {
+class FingerPrinter(config: PrinterConfig,
+                    hashBuilder: HashBuilder,
+                    fft: FFT = new JTransformFFT) {
 
-  val upperLimit = 300
-  val lowerLimit = 40
-  val chunkSize = ChunkSize(4096)
-  val fuzFactor = 3
-  private val hashBuilder = new DefaultHashBuilder(fuzFactor)
-
-  val range = Seq(lowerLimit, 80, 120, 180, upperLimit)
-  val frequencies: Range = lowerLimit until upperLimit
+  private val range: Seq[Int] = config.ranges(5)
 
   def process(signature: Signature): FingerPrint = {
     val item = signature.item
@@ -32,7 +27,8 @@ class FingerPrinter(fft: FFT = new JTransformFFT) {
 
   private def spectrum(array: ByteArrayOutputStream, item: Item): Map[Hash, Seq[Point]] = {
     val audio = array.toByteArray
-    val arrays = audio.sliding(chunkSize.value, chunkSize.value).toArray
+    val chunkSize = config.chunkSize.value
+    val arrays = audio.sliding(chunkSize, chunkSize).toArray
     val results = arrays.map{fft.transform}
     val points = keyPoints(results, item)
     points
@@ -45,8 +41,8 @@ class FingerPrinter(fft: FFT = new JTransformFFT) {
     val pointsMap: scala.collection.mutable.Map[Hash, mutable.ListBuffer[Point]] = mutable.Map.empty
     var t = 0
     while(t < size) {
-      var frequency = lowerLimit
-      while(frequency < upperLimit) {
+      var frequency = config.lowerLimit.value
+      while(frequency < config.upperLimit.value) {
         val magnitude = Math.log(results(t)(frequency).abs + 1)
         val index = indexForFrequency(frequency)
 
@@ -58,7 +54,7 @@ class FingerPrinter(fft: FFT = new JTransformFFT) {
       }
 
       val hash = hashBuilder.hash(Seq(points(t)(0), points(t)(1), points(t)(2), points(t)(3)))
-      val point = Point(item, Chunk(ChunkNumber(t), chunkSize))
+      val point = Point(item, Chunk(ChunkNumber(t), config.chunkSize))
       if(pointsMap.contains(hash)) {
         val hashPoints = pointsMap(hash)
         hashPoints += point

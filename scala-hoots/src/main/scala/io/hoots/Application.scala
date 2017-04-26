@@ -6,7 +6,8 @@ import javax.sound.sampled.AudioSystem
 
 import io.hoots.results.Analyzer
 import io.hoots.results.domain.Matcher
-import io.hoots.fingerprint.FingerPrinter
+import io.hoots.fingerprint.{DefaultHashBuilder, FingerPrinter}
+import io.hoots.fingerprint.domain._
 import io.hoots.signature.WaveAudioFileReader
 
 /**
@@ -32,7 +33,13 @@ object Application {
     println(s"Supported types -> ${l.length}")
 
     val files = Seq(file1, file2, file3, file4, file5, file6, file7)
-    val printer = new FingerPrinter
+    val fuzzFactor = FuzzFactor(3)
+    val printerConfig = PrinterConfig(upperLimit = UpperLimit(300),
+                                      lowerLimit = LowerLimit(40),
+                                      chunkSize = ChunkSize(4096),
+                                      fuzzFactor = fuzzFactor)
+    val hashBuilder = new DefaultHashBuilder(fuzzFactor)
+    val printer = new FingerPrinter(printerConfig, hashBuilder)
     var matcher = new Matcher
     val reader = new WaveAudioFileReader
     val map = files.map{ f =>
