@@ -26,12 +26,13 @@ class FingerPrinter(config: PrinterConfig,
   }
 
   private def spectrum(array: ByteArrayOutputStream, item: Item): Map[Hash, Seq[Point]] = {
-    val audio = array.toByteArray
-    val chunkSize = config.chunkSize.value
-    val arrays = audio.sliding(chunkSize, chunkSize).toArray
-    val results = arrays.map{fft.transform}
-    val points = keyPoints(results, item)
-    points
+//    val audio = array.toByteArray
+//    val chunkSize = config.chunkSize.value
+//    val arrays = audio.sliding(chunkSize, chunkSize).toArray
+//    val results = arrays.map{fft.transform}
+//    val points = keyPoints(results, item)
+//    points
+    Map.empty
   }
 
   private def keyPoints(results: Array[Array[Complex]], item: Item): Map[Hash, Seq[Point]] = {
@@ -54,7 +55,7 @@ class FingerPrinter(config: PrinterConfig,
       }
 
       val hash = hashBuilder.hash(Seq(points(t)(0), points(t)(1), points(t)(2), points(t)(3)))
-      val point = Point(item, Chunk(ChunkNumber(t), config.chunkSize))
+      val point = Point(item, ChunkNumber(t))
       if(pointsMap.contains(hash)) {
         val hashPoints = pointsMap(hash)
         hashPoints += point

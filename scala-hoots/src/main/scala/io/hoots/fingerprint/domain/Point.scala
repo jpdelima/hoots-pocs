@@ -5,4 +5,4 @@ import io.hoots.input.domain.Item
 /**
   * Created by rwadowski on 19.04.17.
   */
-case class Point(item: Item, chunk: Chunk)
+case class Point(item: Item, chunkNumber: ChunkNumber)

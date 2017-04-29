@@ -12,7 +12,7 @@ case class PrinterConfig(upperLimit: UpperLimit,
 
   lazy val frequencies: Range = lowerLimit.value until upperLimit.value
 
-  def ranges(length: Int): Seq[Int] = {
+  def ranges(length: Int = 5): Seq[Int] = {
     @tailrec
     def loop(i: Int, result: Seq[Int]): Seq[Int] = {
       if(0 == i) {

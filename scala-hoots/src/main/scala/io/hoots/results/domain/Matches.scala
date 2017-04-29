@@ -22,8 +22,9 @@ case class MatchResult(scores: Map[Item, Score],
     var map: Map[Item, Float] = Map.empty
     val sampleSizeInBytes = audioFormat.getSampleSizeInBits / 8
     for((item, point) <- matchPoints) {
-      val chunk = point.chunk
-      val ts = chunk.chunkByte / (audioFormat.getSampleRate * sampleSizeInBytes)
+      val chunk = point.chunkNumber
+      //FixMe - not number, it should be number * no of byte
+      val ts = chunk.value / (audioFormat.getSampleRate * sampleSizeInBytes)
       map = map + (item -> ts)
     }
     map

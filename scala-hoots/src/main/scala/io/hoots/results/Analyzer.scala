@@ -18,7 +18,7 @@ class Analyzer extends MatchAnalyzer {
       for((item, points) <- groupedPoints) {
         val pointOffsets = normalize(points)
         val intersection = pointOffsets.intersect(sampleOffsets)
-        matchPoints = matchPoints + (item -> points.minBy(_.chunk.number.value))
+        matchPoints = matchPoints + (item -> points.minBy(_.chunkNumber.value))
         if(scores.contains(item)) {
           scores = scores + (item -> (scores(item) + intersection.size))
         } else {
@@ -30,7 +30,7 @@ class Analyzer extends MatchAnalyzer {
   }
 
   private def normalize(offsets: Seq[Point]): Seq[Int] = {
-    val offsetValues = offsets.map{_.chunk.number.value}
+    val offsetValues = offsets.map{_.chunkNumber.value}
     val min = offsetValues.min
     offsetValues.map{_ - min}
   }

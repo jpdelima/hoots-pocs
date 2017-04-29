@@ -9,4 +9,14 @@ import io.hoots.input.domain.Item
   */
 case class FingerPrint(item: Item,
                        print: Map[Hash, Seq[Point]],
-                       audioFormat: AudioFormat)
+                       audioFormat: AudioFormat) {
+
+  def +(c: HashedChunk): FingerPrint = {
+    if(print.contains(c.hash)) {
+      val points = print(c.hash)
+      FingerPrint(item, print + (c.hash -> (points :+ c.point)), audioFormat)
+    } else {
+      FingerPrint(item, print + (c.hash -> Seq(c.point)), audioFormat)
+    }
+  }
+}
